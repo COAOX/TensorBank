@@ -12,26 +12,10 @@ contract ERC721 {
 
     function supportsInterface(bytes4 _interfaceID) external view returns (bool);
 }
-contract ERC20 {
-    uint256 public totalSupply;
-    function balanceOf(address _owner) constant returns (uint256 balance);
-    function transfer(address _to, uint256 _value) returns (bool success);
-    function transferFrom(address _from, address _to, uint256 _value) returns (bool success);
-    function approve(address _spender, uint256 _value) returns (bool success);
-    function allowance(address _owner, address _spender) constant returns (uint256 remaining);
-    event Transfer(address indexed _from, address indexed _to, uint256 _value);
-    event Approval(address indexed _owner, address indexed _spender, uint256 _value);
-}
+
 
 contract CardBase {
-  ERC20 public DAI = ERC20(0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359);
 
-  function E20Transfer(address _receiver, uint256 _tokenId){
-    DAI.transfer(_receiver, _tokenId);
-  }
-  function E20TransferFrom(address _owner, uint256 _tokenId){
-    DAI.transferFrom(_owner, this, _tokenId);
-  }
 
   event Transfer(address from, address to, uint256 tokenId);
   event Auction(address owner, uint32 class, uint256 attribute, uint32 timeBlock);
@@ -145,7 +129,6 @@ contract CardBase {
       }
 
     function GiftCard()payable returns(uint32){
-          E20Transfer(address(0),1);
           require(countCards<=totalCards);
          return _createCard(msg.sender);
 
