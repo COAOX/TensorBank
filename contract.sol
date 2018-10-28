@@ -1,47 +1,3 @@
-import "github.com/oraclize/ethereum-api/oraclizeAPI.sol";
-
-contract Ownable {
-  address public owner;
-
-  function Ownable() {
-    owner = msg.sender;
-  }
-
-  modifier onlyOwner() {
-    require(msg.sender == owner);
-    _;
-  }
-
-  function transferOwnership(address newOwner) onlyOwner {
-    if (newOwner != address(0)) {
-      owner = newOwner;
-    }
-  }
-
-}
-
-
-contract ERC721Metadata {
-    function getMetadata(uint256 _tokenId, string) public view returns (bytes32[4] buffer, uint256 count) {
-        if (_tokenId == 1) {
-            buffer[0] = "Hello World! :D";
-            count = 15;
-        } else if (_tokenId == 2) {
-            buffer[0] = "I would definitely choose a medi";
-            buffer[1] = "um length string.";
-            count = 49;
-        } else if (_tokenId == 3) {
-            buffer[0] = "Lorem ipsum dolor sit amet, mi e";
-            buffer[1] = "st accumsan dapibus augue lorem,";
-            buffer[2] = " tristique vestibulum id, libero";
-            buffer[3] = " suscipit varius sapien aliquam.";
-            count = 128;
-        }
-    }
-}
-
-
-
 
 contract ERC721 {
     function totalSupply() public view returns (uint256 total);
@@ -56,15 +12,34 @@ contract ERC721 {
 
     function supportsInterface(bytes4 _interfaceID) external view returns (bool);
 }
+contract ERC20 {
+    uint256 public totalSupply;
+    function balanceOf(address _owner) constant returns (uint256 balance);
+    function transfer(address _to, uint256 _value) returns (bool success);
+    function transferFrom(address _from, address _to, uint256 _value) returns (bool success);
+    function approve(address _spender, uint256 _value) returns (bool success);
+    function allowance(address _owner, address _spender) constant returns (uint256 remaining);
+    event Transfer(address indexed _from, address indexed _to, uint256 _value);
+    event Approval(address indexed _owner, address indexed _spender, uint256 _value);
+}
 
+contract CardBase {
+  ERC20 public DAI = ERC20(0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359);
 
-contract CardBase is usingOraclize{
+  function E20Transfer(address _receiver, uint256 _tokenId){
+    DAI.transfer(_receiver, _tokenId);
+  }
+  function E20TransferFrom(address _owner, uint256 _tokenId){
+    DAI.transferFrom(_owner, this, _tokenId);
+  }
 
   event Transfer(address from, address to, uint256 tokenId);
   event Auction(address owner, uint32 class, uint256 attribute, uint32 timeBlock);
   event Create(address owner, uint32 class, uint256 attribute);
   event Dead(address owner, uint256 tokenId);
-  event Attack(address attacker, uint256 tokenId1, address defender, uint256 tokenId2);
+  event Attack(uint256 tokenId1,uint256 tokenId2);
+  event AttackSuccess(uint256 tokenId1,uint256 tokenId2);
+  event AttackFail(uint256 tokenId1,uint256 tokenId2);
 
     struct Card{
       uint256 _tokenId;
@@ -75,7 +50,7 @@ contract CardBase is usingOraclize{
     }
     Card[] Cards;
     uint128 public constant totalCards = uint128(708100);
-    uint32 constant public LuckyFee = uint32(1000);
+    uint256 public LuckyFee = 5 finney;
     uint128 public countCards;
     uint32[5] public CardClass = [
         uint32(100),
@@ -89,19 +64,24 @@ contract CardBase is usingOraclize{
     mapping (uint256 => address) public CardIndexToOwner;
     mapping (address => uint256) ownershipTokenCount;
     mapping (uint256 => address) public CardIndexToApproved;
-    mapping (uint256 => address) public sireAllowedToAddress;
 
-    SaleClockAuction public saleAuction;
-    //SiringClockAuction public siringAuction;
+    ClockAuction public saleAuction;
+    function setSaleAuctionAddress(address _address) {
+        SaleClockAuction candidateContract = SaleClockAuction(_address);
+
+        saleAuction = candidateContract;
+    }
 
     function attack(uint256 _from, uint256 _to)returns(bool){
       Card card1 = Cards[_from];
       Card card2 = Cards[_to];
       require(card1.owner==msg.sender);
+      Attack(_from, _to);
         if(compare(card1._class,card2._class)){
           card2.life--;
           if(card2.life==0){
             dead(card2.owner,_to);
+            AttackSuccess(_from,_to);
             return true;
           }
         }
@@ -109,6 +89,7 @@ contract CardBase is usingOraclize{
           card1.life--;
           if(card1.life==0){
             dead(card1.owner,_to);
+            AttackFail(_from,_to);
             return false;
           }
         }
@@ -120,7 +101,6 @@ contract CardBase is usingOraclize{
       Cards[_tokenId].owner=address(0);
       CurrentClass[Cards[_tokenId]._class]--;
       ownershipTokenCount[owner]--;
-      delete sireAllowedToAddress[_tokenId];
       delete CardIndexToApproved[_tokenId];
     }
 
@@ -164,18 +144,16 @@ contract CardBase is usingOraclize{
         }
       }
 
-    function GiftCard(){
-      uint32 ind;
-        msg.sender.send(LuckyFee);
-        for(ind=0;ind<3;ind++){
+    function GiftCard()payable returns(uint32){
+          E20Transfer(address(0),1);
           require(countCards<=totalCards);
-          _createCard(msg.sender);
+         return _createCard(msg.sender);
 
-        }
+
     }
     function _createCard(address _owner)
         internal
-        returns (uint)
+        returns (uint32)
     {
         uint256 attribute=rand();
         uint256 rnum = rand()%totalCards;
@@ -200,7 +178,7 @@ contract CardBase is usingOraclize{
         _card._tokenId=newCardId;
         require(newCardId == uint256(uint32(newCardId)));
 
-        Create(
+       emit Create(
             _owner,
             class,
             attribute
@@ -208,7 +186,7 @@ contract CardBase is usingOraclize{
 
         _transfer(0, _owner, newCardId);
 
-        return newCardId;
+        return class;
     }
 
 
@@ -222,7 +200,6 @@ contract CardBase is usingOraclize{
         if (_from != address(0)) {
             Cards[_tokenId].owner=_to;
             ownershipTokenCount[_from]--;
-            delete sireAllowedToAddress[_tokenId];
             delete CardIndexToApproved[_tokenId];
 
         }
@@ -234,10 +211,10 @@ contract CardOwnership is CardBase, ERC721 {
     string public constant name = "CardGame";
     string public constant symbol = "CG";
 
-    ERC721Metadata public erc721Metadata;
 
     bytes4 constant InterfaceSignature_ERC165 =
         bytes4(keccak256('supportsInterface(bytes4)'));
+
 
     bytes4 constant InterfaceSignature_ERC721 =
         bytes4(keccak256('name()')) ^
@@ -248,16 +225,47 @@ contract CardOwnership is CardBase, ERC721 {
         bytes4(keccak256('approve(address,uint256)')) ^
         bytes4(keccak256('transfer(address,uint256)')) ^
         bytes4(keccak256('transferFrom(address,address,uint256)')) ^
-        bytes4(keccak256('tokensOfOwner(address)')) ^
-        bytes4(keccak256('tokenMetadata(uint256,string)'));
+        bytes4(keccak256('tokensOfOwner(address)'));
+
+
+        function CardOwnership() public {
+           // _createCard(address(0));
+        }
+
+
+        function createSaleAuction(
+          uint256 _cardId,
+          uint256 _startingPrice,
+          uint32 _step,
+          uint32 _maxTimes
+        )
+            external
+        {
+            require(_owns(msg.sender, _cardId));
+            _approve(_cardId, saleAuction);
+            saleAuction.createAuction(
+               _cardId,
+               _startingPrice,
+               _step,
+               _maxTimes,
+                msg.sender,
+                0
+            );
+        }
+
+
+          function bid(uint256 _tokenId,uint256 _bidAmount)
+          external
+          {
+              saleAuction._bid(_tokenId, _bidAmount);
+              saleAuction._transfer(msg.sender, _tokenId);
+          }
+
 
 
     function supportsInterface(bytes4 _interfaceID) external view returns (bool)
     {
         return ((_interfaceID == InterfaceSignature_ERC165) || (_interfaceID == InterfaceSignature_ERC721));
-    }
-    function setMetadataAddress(address _contractAddress) {
-        erc721Metadata = ERC721Metadata(_contractAddress);
     }
     function _owns(address _claimant, uint256 _tokenId) internal view returns (bool) {
         return CardIndexToOwner[_tokenId] == _claimant;
@@ -333,8 +341,6 @@ contract CardOwnership is CardBase, ERC721 {
             uint256 totalCats = totalSupply();
             uint256 resultIndex = 0;
 
-            // We count on the fact that all cats have IDs starting at 1 and increasing
-            // sequentially up to the totalCat count.
             uint256 catId;
 
             for (catId = 1; catId <= totalCats; catId++) {
@@ -347,71 +353,22 @@ contract CardOwnership is CardBase, ERC721 {
             return result;
         }
     }
-    function _memcpy(uint _dest, uint _src, uint _len) private view {
-        // Copy word-length chunks while possible
-        for(; _len >= 32; _len -= 32) {
-            assembly {
-                mstore(_dest, mload(_src))
-            }
-            _dest += 32;
-            _src += 32;
-        }
 
-        // Copy remaining bytes
-        uint256 mask = 256 ** (32 - _len) - 1;
-        assembly {
-            let srcpart := and(mload(_src), not(mask))
-            let destpart := and(mload(_dest), mask)
-            mstore(_dest, or(destpart, srcpart))
-        }
-    }
-    function _toString(bytes32[4] _rawBytes, uint256 _stringLength) private view returns (string) {
-        var outputString = new string(_stringLength);
-        uint256 outputPtr;
-        uint256 bytesPtr;
 
-        assembly {
-            outputPtr := add(outputString, 32)
-            bytesPtr := _rawBytes
-        }
-
-        _memcpy(outputPtr, bytesPtr, _stringLength);
-
-        return outputString;
-    }
-    function tokenMetadata(uint256 _tokenId, string _preferredTransport) external view returns (string infoUrl) {
-        require(erc721Metadata != address(0));
-        bytes32[4] memory buffer;
-        uint256 count;
-        (buffer, count) = erc721Metadata.getMetadata(_tokenId, _preferredTransport);
-
-        return _toString(buffer, count);
-    }
 }
 
-
-
-
-
-
-
-
-
-
-contract Exchange{
-  ERC721 public nonFungibleContract;
-}
 
 contract ClockAuctionBase {
 
     struct Auction {
         address seller;
         uint256 startingPrice;
-        uint256 endingPrice;
-        uint64 Step;
+        uint32 step;
         uint64 startedAt;
         uint32 maxTimes;
         address currentBuyer;
+        uint256 currentHighestBid;
+        uint32 times;
     }
 
     ERC721 public nonFungibleContract;
@@ -419,7 +376,7 @@ contract ClockAuctionBase {
     uint256 public ownerCut;
     mapping (uint256 => Auction) tokenIdToAuction;
 
-    event AuctionCreated(uint256 tokenId, uint256 startingPrice, uint256 endingPrice, uint256 duration);
+    event AuctionCreated(uint256 tokenId, uint256 startingPrice, uint32 step, uint32 maxTimes);
     event AuctionSuccessful(uint256 tokenId, uint256 totalPrice, address winner);
     event AuctionCancelled(uint256 tokenId);
     function _owns(address _claimant, uint256 _tokenId) internal view returns (bool) {
@@ -428,19 +385,19 @@ contract ClockAuctionBase {
     function _escrow(address _owner, uint256 _tokenId) internal {
         nonFungibleContract.transferFrom(_owner, this, _tokenId);
     }
-    function _transfer(address _receiver, uint256 _tokenId) internal {
+    function _transfer(address _receiver, uint256 _tokenId)  {
         nonFungibleContract.transfer(_receiver, _tokenId);
     }
     function _addAuction(uint256 _tokenId, Auction _auction) internal {
-        require(_auction.duration >= 1 minutes);
 
-        tokenIdToAuction[_tokenId] = _auction;   //给该拍卖编号
+
+        tokenIdToAuction[_tokenId] = _auction;
 
         AuctionCreated(
             uint256(_tokenId),
             uint256(_auction.startingPrice),
-            uint256(_auction.endingPrice),
-            uint256(_auction.duration)
+            uint32(_auction.step),
+            uint32(_auction.maxTimes)
         );
     }
     function _cancelAuction(uint256 _tokenId, address _seller) internal {
@@ -449,14 +406,13 @@ contract ClockAuctionBase {
         AuctionCancelled(_tokenId);
     }
     function _bid(uint256 _tokenId, uint256 _bidAmount)
-    internal
     returns (uint256)
     {
         Auction storage auction = tokenIdToAuction[_tokenId];
 
-        uint256 price = auction.endingPrice;
+        uint256 price = auction.startingPrice;
 
-        if(_bidAmount > price){
+        if(auction.times+1>= auction.maxTimes){
             address seller = auction.seller;
             _removeAuction(_tokenId);
 
@@ -470,7 +426,8 @@ contract ClockAuctionBase {
 
 
         }else{
-            if(_bidAmount > auction.currentHighestBid){
+            if(_bidAmount > auction.currentHighestBid+auction.step){
+              auction.times++;
                 tokenIdToAuction[_tokenId].currentHighestBid = _bidAmount;
                 tokenIdToAuction[_tokenId].currentBuyer = msg.sender;
             }
@@ -481,56 +438,29 @@ contract ClockAuctionBase {
     function _closeAuction(uint256 _tokenId, bool agreeDeal)public{
         Auction storage auction = tokenIdToAuction[_tokenId];
 
-        require(!_isOnAuction(auction));         //已结束
-        require(msg.sender==auction.seller);    //只限卖家操作
+        require(msg.sender==auction.seller);
 
-        //同意交易
         if(agreeDeal){
             uint256 price = auction.currentHighestBid;
             if (price > 0) {
-
                 uint256 auctioneerCut = _computeCut(price);
                 uint256 sellerProceeds = price - auctioneerCut;
-
-
                 auction.seller.transfer(sellerProceeds);
-
-
-
-
-                // 事件记录，拍卖成功
                 AuctionSuccessful(_tokenId, price, auction.currentBuyer);
-
             }
-
-
-
         }
         _removeAuction(_tokenId);
-
     }
-
-
-
-    ///  删除该拍卖
     function _removeAuction(uint256 _tokenId) internal {
         delete tokenIdToAuction[_tokenId];
     }
-
-    /// 判断该拍卖是否还继续
     function _isOnAuction(Auction storage _auction) internal view returns (bool) {
         return (_auction.startedAt > 0);
     }
-
-    /// 计算卖家得到出价的利润
     function _computeCut(uint256 _price) internal view returns (uint256) {
-
         return _price * ownerCut / 10000;
     }
-
 }
-
-
 
 contract ClockAuction is ClockAuctionBase {
     bytes4 constant InterfaceSignature_ERC721 = bytes4(0x9a20483d);
@@ -539,40 +469,39 @@ contract ClockAuction is ClockAuctionBase {
         ownerCut = _cut;
 
         ERC721 candidateContract = ERC721(_nftAddress);
-        require(candidateContract.supportsInterface(InterfaceSignature_ERC721));
         nonFungibleContract = candidateContract;
     }
     function createAuction(
         uint256 _tokenId,
         uint256 _startingPrice,
-        uint256 _endingPrice,
-        uint256 _duration,
-        address _seller
+        uint32 _step,
+        uint32 _maxTimes,
+        address _seller,
+        uint256 currentHighestBid
     )
     external
     {
         require(_startingPrice == uint256(uint128(_startingPrice)));
-        require(_endingPrice == uint256(uint128(_endingPrice)));
-        require(_duration == uint256(uint64(_duration)));
 
         require(_owns(msg.sender, _tokenId));
         _escrow(msg.sender, _tokenId);
         Auction memory auction = Auction(
             _seller,
             uint128(_startingPrice),
-            uint128(_endingPrice),
-            uint64(_duration),
+            uint32(_step),
             uint64(now),
-            uint64(0),
-            _seller
+            uint32(_maxTimes),
+            _seller,
+            0,
+            0
+
         );
         _addAuction(_tokenId, auction);
     }
-    function bid(uint256 _tokenId)
+    function bid(uint256 _tokenId,uint256 _bidAmount)
     external
-    payable
     {
-        _bid(_tokenId, msg.value);
+        _bid(_tokenId, _bidAmount);
         _transfer(msg.sender, _tokenId);
     }
     function cancelAuction(uint256 _tokenId)
@@ -584,16 +513,6 @@ contract ClockAuction is ClockAuctionBase {
         require(msg.sender == seller);
         _cancelAuction(_tokenId, seller);
     }
-    function cancelAuctionWhenPaused(uint256 _tokenId)
-    external
-    {
-        Auction storage auction = tokenIdToAuction[_tokenId];
-        require(_isOnAuction(auction));
-        _cancelAuction(_tokenId, auction.seller);
-    }
-
-    function createAuction
-
 
 
     function getAuction(uint256 _tokenId)
@@ -603,78 +522,74 @@ contract ClockAuction is ClockAuctionBase {
     (
         address seller,
         uint256 startingPrice,
-        uint256 endingPrice,
-        uint256 duration,
-        uint256 startedAt,
-        uint256  currentHighestBid,
-        address currentBuyer
+        uint32 step,
+        uint64 startedAt,
+        uint32 maxTimes,
+        address currentBuyer,
+        uint32 times,
+        uint256 currentHighestBid
     ) {
         Auction storage auction = tokenIdToAuction[_tokenId];
         require(_isOnAuction(auction));
         return (
         auction.seller,
         auction.startingPrice,
-        auction.endingPrice,
-        auction.duration,
+        auction.step,
         auction.startedAt,
-        auction.currentHighestBid,
-        auction.currentBuyer
+        auction.maxTimes,
+        auction.currentBuyer,
+        auction.times,
+        auction.currentHighestBid
         );
     }
 
-
-
 }
 
-
-///  卖出
 contract SaleClockAuction is ClockAuction {
 
     bool public isSaleClockAuction = true;
 
 
-    // Delegate constructor
     function SaleClockAuction(address _nftAddr, uint256 _cut) public
     ClockAuction(_nftAddr, _cut) {}
-
-    function createAuction(
+      function createAuction(
         uint256 _tokenId,
         uint256 _startingPrice,
-        uint256 _endingPrice,
-        uint256 _duration,
-        address _seller
-    )
-    external
-    {
-        require(_startingPrice == uint256(uint128(_startingPrice)));
-        require(_endingPrice == uint256(uint128(_endingPrice)));
-        require(_duration == uint256(uint64(_duration)));
+        uint32 _step,
+        uint32 _maxTimes,
+        address _seller,
+        uint256 currentHighestBid
+      )
+      external
+      {
+          require(_startingPrice == uint256(uint128(_startingPrice)));
 
-        require(msg.sender == address(nonFungibleContract));
-        _escrow(_seller, _tokenId);
-        Auction memory auction = Auction(
-            _seller,
-            uint128(_startingPrice),
-            uint128(_endingPrice),
-            uint64(_duration),
-            uint64(now),
-            uint64(0),
-            _seller
-        );
-        _addAuction(_tokenId, auction);
-    }
+          require(msg.sender == address(nonFungibleContract));
+          _escrow(_seller, _tokenId);
+          Auction memory auction = Auction(
+                _seller,
+                uint128(_startingPrice),
+                uint32(_step),
+                uint64(now),
+                uint32(_maxTimes),
+                _seller,
+                0,
+                0
+          );
+          _addAuction(_tokenId, auction);
+      }
 
-    function bid(uint256 _tokenId)
-    external
-    payable
-    {
-        address seller = tokenIdToAuction[_tokenId].seller;
-        uint256 price = _bid(_tokenId, msg.value);
-        _transfer(msg.sender, _tokenId);
-    }
+      function bid(uint256 _tokenId)
+      external
+      payable
+      {
+          address seller = tokenIdToAuction[_tokenId].seller;
+          uint256 price = _bid(_tokenId, msg.value);
+          _transfer(msg.sender, _tokenId);
+      }
 
-    function closeAuction(bool agreed,uint256 tokenId) public{
-        _closeAuction(tokenId,agreed);
-    }
+      function closeAuction(bool agreed,uint256 tokenId) public{
+          _closeAuction(tokenId,agreed);
+      }
 
 }
