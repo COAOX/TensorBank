@@ -214,6 +214,401 @@
         //这里要换成合约的abi
         var contract = web3.eth.contract([
 	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "tokenId1",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "tokenId2",
+				"type": "uint256"
+			}
+		],
+		"name": "AttackFail",
+		"type": "event"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_to",
+				"type": "address"
+			},
+			{
+				"name": "_tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "approve",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_from",
+				"type": "uint256"
+			},
+			{
+				"name": "_to",
+				"type": "uint256"
+			}
+		],
+		"name": "attack",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_tokenId",
+				"type": "uint256"
+			},
+			{
+				"name": "_bidAmount",
+				"type": "uint256"
+			}
+		],
+		"name": "bid",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_cardId",
+				"type": "uint256"
+			},
+			{
+				"name": "_startingPrice",
+				"type": "uint256"
+			},
+			{
+				"name": "_step",
+				"type": "uint32"
+			},
+			{
+				"name": "_maxTimes",
+				"type": "uint32"
+			}
+		],
+		"name": "createSaleAuction",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"name": "_tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "dead",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [],
+		"name": "GiftCard",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint32"
+			}
+		],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_address",
+				"type": "address"
+			}
+		],
+		"name": "setSaleAuctionAddress",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_to",
+				"type": "address"
+			},
+			{
+				"name": "_tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "transfer",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_from",
+				"type": "address"
+			},
+			{
+				"name": "_to",
+				"type": "address"
+			},
+			{
+				"name": "_tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "transferFrom",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "tokenId1",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "tokenId2",
+				"type": "uint256"
+			}
+		],
+		"name": "AttackSuccess",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "Dead",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "class",
+				"type": "uint32"
+			},
+			{
+				"indexed": false,
+				"name": "attribute",
+				"type": "uint256"
+			}
+		],
+		"name": "Create",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "class",
+				"type": "uint32"
+			},
+			{
+				"indexed": false,
+				"name": "attribute",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "timeBlock",
+				"type": "uint32"
+			}
+		],
+		"name": "Auction",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "approved",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "Approval",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "Transfer",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "tokenId1",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "tokenId2",
+				"type": "uint256"
+			}
+		],
+		"name": "Attack",
+		"type": "event"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_owner",
+				"type": "address"
+			}
+		],
+		"name": "balanceOf",
+		"outputs": [
+			{
+				"name": "count",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "CardClass",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint32"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "CardIndexToApproved",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"constant": true,
 		"inputs": [
 			{
@@ -234,45 +629,21 @@
 	},
 	{
 		"constant": true,
-		"inputs": [],
-		"name": "rand",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [],
-		"name": "GiftCard",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint32"
-			}
-		],
-		"payable": true,
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"constant": true,
 		"inputs": [
 			{
-				"name": "",
+				"name": "_from",
+				"type": "uint256"
+			},
+			{
+				"name": "_to",
 				"type": "uint256"
 			}
 		],
-		"name": "CardClass",
+		"name": "compare",
 		"outputs": [
 			{
 				"name": "",
-				"type": "uint32"
+				"type": "bool"
 			}
 		],
 		"payable": false,
@@ -313,44 +684,64 @@
 		"type": "function"
 	},
 	{
-		"constant": false,
-		"inputs": [
+		"constant": true,
+		"inputs": [],
+		"name": "LuckyFee",
+		"outputs": [
 			{
-				"name": "owner",
-				"type": "address"
-			},
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "name",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
 			{
 				"name": "_tokenId",
 				"type": "uint256"
 			}
 		],
-		"name": "dead",
-		"outputs": [],
+		"name": "ownerOf",
+		"outputs": [
+			{
+				"name": "owner",
+				"type": "address"
+			}
+		],
 		"payable": false,
-		"stateMutability": "nonpayable",
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_from",
-				"type": "uint256"
-			},
-			{
-				"name": "_to",
-				"type": "uint256"
-			}
-		],
-		"name": "attack",
+		"constant": true,
+		"inputs": [],
+		"name": "rand",
 		"outputs": [
 			{
 				"name": "",
-				"type": "bool"
+				"type": "uint256"
 			}
 		],
 		"payable": false,
-		"stateMutability": "nonpayable",
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -361,6 +752,58 @@
 			{
 				"name": "",
 				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_interfaceID",
+				"type": "bytes4"
+			}
+		],
+		"name": "supportsInterface",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "symbol",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_owner",
+				"type": "address"
+			}
+		],
+		"name": "tokensOfOwner",
+		"outputs": [
+			{
+				"name": "ownerTokens",
+				"type": "uint256[]"
 			}
 		],
 		"payable": false,
@@ -383,50 +826,8 @@
 	},
 	{
 		"constant": true,
-		"inputs": [
-			{
-				"name": "_from",
-				"type": "uint256"
-			},
-			{
-				"name": "_to",
-				"type": "uint256"
-			}
-		],
-		"name": "compare",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "CardIndexToApproved",
-		"outputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
 		"inputs": [],
-		"name": "LuckyFee",
+		"name": "totalSupply",
 		"outputs": [
 			{
 				"name": "",
@@ -436,149 +837,10 @@
 		"payable": false,
 		"stateMutability": "view",
 		"type": "function"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"name": "tokenId",
-				"type": "uint256"
-			}
-		],
-		"name": "Transfer",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"name": "owner",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"name": "class",
-				"type": "uint32"
-			},
-			{
-				"indexed": false,
-				"name": "attribute",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"name": "timeBlock",
-				"type": "uint32"
-			}
-		],
-		"name": "Auction",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"name": "owner",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"name": "class",
-				"type": "uint32"
-			},
-			{
-				"indexed": false,
-				"name": "attribute",
-				"type": "uint256"
-			}
-		],
-		"name": "Create",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"name": "owner",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"name": "tokenId",
-				"type": "uint256"
-			}
-		],
-		"name": "Dead",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"name": "tokenId1",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"name": "tokenId2",
-				"type": "uint256"
-			}
-		],
-		"name": "Attack",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"name": "tokenId1",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"name": "tokenId2",
-				"type": "uint256"
-			}
-		],
-		"name": "AttackSuccess",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"name": "tokenId1",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"name": "tokenId2",
-				"type": "uint256"
-			}
-		],
-		"name": "AttackFail",
-		"type": "event"
 	}
 ]);
 		//这里是合约的地址
-        var contractAdd = contract.at('0x3b7263fbd93a86cf1b532d4df7f66939f59b43f5');
+        var contractAdd = contract.at('0x54fe8219e72d3a873767794432e1dc73110bd7a7');
    
 		//函数，买卡
 		$("#addCard").click(function(){
@@ -599,6 +861,7 @@
 			}
 		)
 
+
 		var CreatEvent = contractAdd.Create({},'latest');
 			var ranum = Math.random();
         	CreatEvent.watch(function (err, result) {
@@ -607,7 +870,6 @@
 									
 									$('#addCard').show();
 									$("#tmp").remove();
-									console.log(result.args.class);
 									switch(result.args.class.c[0]){
 										case 0:
 										$("#op_gif_div").after("<div id='tmp'><img src='img/S.JPG',  style='position:relative;left:535px;top:30px', width=250,height=50'></div>");
@@ -650,11 +912,14 @@
                                         <p class="tm-text"><span class="tm-white">Now you are can use your card to compete with your opponent, who is from the chain. Get ready and enjoy your game.</span>
                                         </p>                                     
                                     </div>
-									<div class="grid-item">
+									<div class="grid-item" id="doppo">
                                         
-                                            <button id="fd_oppo", style="position:relative; top:150px;">Find Opponent</button>        
-                                        
+                                            <button class="bu" id="oppo", style="position:relative; top:150px;">Find Opponent</button>        
                                     </div>
+
+
+
+
                                     <div class="grid-item">
                                         <figure class="effect-bubba">
                                             <img src="img/B.jpg" alt="Image" class="img-fluid tm-img">        
@@ -671,7 +936,686 @@
                                         </figure>
                                     </div> 
 
-									
+					<script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+
+									<script>
+					if (typeof web3 !== 'undefined') {
+
+            web3 = new Web3(web3.currentProvider);
+        } else {
+            // set the provider you want from Web3.providers
+            console.log("in")
+            web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+        }
+
+		//这里是合约的abi
+		
+	
+ 
+        //这里要换成合约的abi
+        var contract = web3.eth.contract([
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "tokenId1",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "tokenId2",
+				"type": "uint256"
+			}
+		],
+		"name": "AttackFail",
+		"type": "event"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_to",
+				"type": "address"
+			},
+			{
+				"name": "_tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "approve",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_from",
+				"type": "uint256"
+			},
+			{
+				"name": "_to",
+				"type": "uint256"
+			}
+		],
+		"name": "attack",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_tokenId",
+				"type": "uint256"
+			},
+			{
+				"name": "_bidAmount",
+				"type": "uint256"
+			}
+		],
+		"name": "bid",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_cardId",
+				"type": "uint256"
+			},
+			{
+				"name": "_startingPrice",
+				"type": "uint256"
+			},
+			{
+				"name": "_step",
+				"type": "uint32"
+			},
+			{
+				"name": "_maxTimes",
+				"type": "uint32"
+			}
+		],
+		"name": "createSaleAuction",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"name": "_tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "dead",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [],
+		"name": "GiftCard",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint32"
+			}
+		],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_address",
+				"type": "address"
+			}
+		],
+		"name": "setSaleAuctionAddress",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_to",
+				"type": "address"
+			},
+			{
+				"name": "_tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "transfer",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_from",
+				"type": "address"
+			},
+			{
+				"name": "_to",
+				"type": "address"
+			},
+			{
+				"name": "_tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "transferFrom",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "tokenId1",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "tokenId2",
+				"type": "uint256"
+			}
+		],
+		"name": "AttackSuccess",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "Dead",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "class",
+				"type": "uint32"
+			},
+			{
+				"indexed": false,
+				"name": "attribute",
+				"type": "uint256"
+			}
+		],
+		"name": "Create",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "class",
+				"type": "uint32"
+			},
+			{
+				"indexed": false,
+				"name": "attribute",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "timeBlock",
+				"type": "uint32"
+			}
+		],
+		"name": "Auction",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "approved",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "Approval",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "Transfer",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "tokenId1",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "tokenId2",
+				"type": "uint256"
+			}
+		],
+		"name": "Attack",
+		"type": "event"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_owner",
+				"type": "address"
+			}
+		],
+		"name": "balanceOf",
+		"outputs": [
+			{
+				"name": "count",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "CardClass",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint32"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "CardIndexToApproved",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "CardIndexToOwner",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_from",
+				"type": "uint256"
+			},
+			{
+				"name": "_to",
+				"type": "uint256"
+			}
+		],
+		"name": "compare",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "countCards",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint128"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "CurrentClass",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint32"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "LuckyFee",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "name",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "ownerOf",
+		"outputs": [
+			{
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "rand",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "saleAuction",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_interfaceID",
+				"type": "bytes4"
+			}
+		],
+		"name": "supportsInterface",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "symbol",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_owner",
+				"type": "address"
+			}
+		],
+		"name": "tokensOfOwner",
+		"outputs": [
+			{
+				"name": "ownerTokens",
+				"type": "uint256[]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "totalCards",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint128"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "totalSupply",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	}
+]);
+		//
+		//函数，买卡
+		$("#oppo").click(function(){
+			console.log("in");
+            contractAdd.attack(1,0,(error,res)=>{//attack bug
+                if (error){
+                    console.log(error)
+                }
+                else{
+
+                    var attack_result = res.args;		
+                }
+				})
+			}
+			
+		)
+
+
+
+		var SuccessEvent = contractAdd.AttackSuccess({},'latest');
+        	SuccessEvent.watch(function (err, result) {
+        		console.log("successevent")
+    if (!err) {									
+			alert("Success!");
+    } 
+});
+        	var FailEvent = contractAdd.AttackFail({},'latest');
+        	FailEvent.watch(function (err, result) {
+        		console.log("failevent")
+    if (!err) {									
+			alert("Fail!");
+    } 
+});
+	
+					</script>	
+					
                                 </div>                                 
                             </div> <!-- .tm-img-gallery-container -->
                         </div>         
@@ -764,13 +1708,13 @@
                                                     </div>  
 
                                                     <button type="submit" class="pull-xs-right tm-submit-btn">Send</button>  
-                                                
+                                              
                                                 </form>  
                                             </div>
 
                                             <div class="tm-bg-white-translucent text-xs-left tm-textbox tm-2-col-textbox-2 tm-textbox-padding tm-textbox-padding-contact">
                                                 <h2 class="tm-contact-info">Tensor of Blockchain,Zhejiang university</h2>
-                                                <div><img src='img/S.JPG',  style='position:relative;left:100px;top:30px', width=300,height=6></div>
+                                                <div><img src='img/S.jsp',  style='position:relative;left:100px;top:30px', width=300,height=6></div>
                                                 <div id="google-map"></div>
                                             </div>
 

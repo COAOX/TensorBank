@@ -15,7 +15,7 @@ contract ERC721 {
 
 
 contract CardBase {
-
+ 
 
   event Transfer(address from, address to, uint256 tokenId);
   event Auction(address owner, uint32 class, uint256 attribute, uint32 timeBlock);
@@ -63,19 +63,21 @@ contract CardBase {
       Attack(_from, _to);
         if(compare(card1._class,card2._class)){
           card2.life--;
+          AttackSuccess(_from,_to);
           if(card2.life==0){
             dead(card2.owner,_to);
-            AttackSuccess(_from,_to);
-            return true;
-          }
+            
+            
+          }return true;
         }
         else{
           card1.life--;
+          AttackFail(_from,_to);
           if(card1.life==0){
             dead(card1.owner,_to);
-            AttackFail(_from,_to);
-            return false;
-          }
+            
+            
+          }return false;
         }
 
     }
